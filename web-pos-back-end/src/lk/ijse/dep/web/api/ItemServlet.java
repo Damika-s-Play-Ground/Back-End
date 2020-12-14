@@ -58,7 +58,7 @@ public class ItemServlet extends HttpServlet {
                 code = rst.getString(1);
                 String description = rst.getString(2);
                 BigDecimal unitPrice = rst.getBigDecimal(3).setScale(2);
-                int qtyOnHand = rst.getInt(2);
+                int qtyOnHand = rst.getInt(4);
                 itemList.add(new Item(code, description,unitPrice,qtyOnHand));
             }
 
@@ -100,20 +100,18 @@ public class ItemServlet extends HttpServlet {
             PreparedStatement pstm = connection.prepareStatement("INSERT INTO Item VALUES (?,?,?,?)");
             pstm.setString(1, item.getCode());
             pstm.setString(2, item.getDescription());
-            //pstm.setString(3, Integer.parseInt(txtQTYOnHand.getText()));
-            pstm.setString(4, item.getUnitPrice().toString());
+            pstm.setString(3, item.getUnitPrice().toString());
+            pstm.setString(4, Integer.toString(item.getQtyOnHand()));
             if (pstm.executeUpdate() > 0) {
                 resp.setStatus(HttpServletResponse.SC_CREATED);
             } else {
                 resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-        } catch (SQLIntegrityConstraintViolationException ex) {
+        } catch (SQLIntegrityConstraintViolationException | JsonbException ex) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
         } catch (SQLException throwables) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throwables.printStackTrace();
-        } catch (JsonbException exp) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
 
     }
@@ -124,8 +122,8 @@ public class ItemServlet extends HttpServlet {
         /* CORS Policy */
         resp.addHeader("Access-Control-Allow-Origin", "http://localhost:3000");
 
-        String id = req.getParameter("id");
-        if (id == null || !id.matches("C\\d{3}")) {
+        String code = req.getParameter("code");
+        if (code == null || !code.matches("P\\d{3}")) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
@@ -133,24 +131,25 @@ public class ItemServlet extends HttpServlet {
         BasicDataSource cp = (BasicDataSource) getServletContext().getAttribute("cp");
         try (Connection connection = cp.getConnection()) {
             Jsonb jsonb = JsonbBuilder.create();
-            Customer customer = jsonb.fromJson(req.getReader(), Customer.class);
+            Item item = jsonb.fromJson(req.getReader(), Item.class);
 
             /* Validation Logic */
-            if (customer.getId() != null || customer.getName() == null || customer.getAddress() == null) {
+            if (item.getCode() == null || item.getDescription() == null || item.getQtyOnHand() == 0||item.getUnitPrice()==null) {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
                 return;
             }
-            if (customer.getName().trim().isEmpty() || customer.getAddress().trim().isEmpty()) {
+            if (item.getDescription().trim().isEmpty() || Integer.toString(item.getQtyOnHand()).trim().isEmpty()||item.getUnitPrice().toString().trim().isEmpty()) {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
                 return;
             }
-            PreparedStatement pstm = connection.prepareStatement("SELECT * FROM Customers WHERE id=?");
-            pstm.setObject(1, id);
+            PreparedStatement pstm = connection.prepareStatement("SELECT * FROM Item WHERE code=?");
+            pstm.setObject(1, code);
             if (pstm.executeQuery().next()) {
-                pstm = connection.prepareStatement("UPDATE Customers SET name=?, address=? WHERE id=?");
-                pstm.setObject(1, customer.getName());
-                pstm.setObject(2, customer.getAddress());
-                pstm.setObject(3, id);
+                pstm = connection.prepareStatement("UPDATE Item SET description=?, unitPrice=?, qtyOnHand=? WHERE code=?");
+                pstm.setObject(1, item.getDescription());
+                pstm.setObject(2, item.getUnitPrice());
+                pstm.setObject(3, item.getQtyOnHand());
+                pstm.setObject(4, code);
                 if (pstm.executeUpdate() > 0) {
                     resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
                 } else {
@@ -159,8 +158,8 @@ public class ItemServlet extends HttpServlet {
             } else {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch (JsonbException exp) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -174,7 +173,7 @@ public class ItemServlet extends HttpServlet {
         resp.addHeader("Access-Control-Allow-Origin", "http://localhost:3000");
 
         String code = req.getParameter("code");
-        if (code == null || !code.matches("C\\d{3}")) {
+        if (code == null || !code.matches("P\\d{3}")) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
@@ -197,9 +196,9 @@ public class ItemServlet extends HttpServlet {
             }
         } catch (SQLIntegrityConstraintViolationException ex) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
-        } catch (SQLException throwables) {
+        } catch (SQLException throwable) {
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            throwables.printStackTrace();
+            throwable.printStackTrace();
         }
     }
 
