@@ -91,6 +91,7 @@ public class CustomerServlet extends HttpServlet {
                 return;
             }
             if (!customer.getId().matches("C\\d{3}") || customer.getName().trim().isEmpty() || customer.getAddress().trim().isEmpty()) {
+
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
                 return;
             }
@@ -104,12 +105,14 @@ public class CustomerServlet extends HttpServlet {
                 resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         } catch (SQLIntegrityConstraintViolationException ex) {
+            System.out.println("------------------------------------");
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        } catch ( JsonbException ex) {
+           // System.out.println("------------------------------------");
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
         } catch (SQLException throwables) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throwables.printStackTrace();
-        } catch (JsonbException exp) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
 
     }

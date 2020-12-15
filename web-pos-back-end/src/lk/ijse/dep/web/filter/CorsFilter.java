@@ -1,3 +1,4 @@
+/*
 package lk.ijse.dep.web.filter;
 
 import javax.servlet.*;
@@ -9,10 +10,12 @@ import java.io.IOException;
 import java.util.logging.Filter;
 import java.util.logging.LogRecord;
 
+*/
 /**
  * @author : Damika Anupama Nanayakkara <damikaanupama@gmail.com>
  * @since : 14/12/2020
- **/
+ **//*
+
 @WebFilter(filterName = "CorsFilter", urlPatterns = "/*")
 public class CorsFilter extends HttpFilter {
     @Override
@@ -24,3 +27,4 @@ public class CorsFilter extends HttpFilter {
         chain.doFilter(request, response);
     }
 }
+*/

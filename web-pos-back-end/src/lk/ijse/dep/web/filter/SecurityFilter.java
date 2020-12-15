@@ -1,13 +1,16 @@
+/*
 package lk.ijse.dep.web.filter;
 
 
 import javax.servlet.*;
 import java.io.IOException;
 
+*/
 /**
  * @author : Damika Anupama Nanayakkara <damikaanupama@gmail.com>
  * @since : 14/12/2020
- **/
+ **//*
+
 public class SecurityFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -28,3 +31,4 @@ public class SecurityFilter implements Filter {
 
     }
 }
+*/

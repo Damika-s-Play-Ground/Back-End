@@ -21,7 +21,7 @@ public class MyContextListner implements ServletContextListener {
         bds.setPassword("root");
         bds.setUrl("jdbc:mysql://localhost:3306/Dep6");
         bds.setDriverClassName("com.mysql.cj.jdbc.Driver");
-//        bds.setConnectionProperties("SSL=true");
+        bds.setConnectionProperties("SSL=false");
         bds.setInitialSize(5);//total connections in c.pool
         bds.setMaxTotal(5);//Max connections for db(solution for data traffic)
         ServletContext stx = sce.getServletContext();//get the servlet context
