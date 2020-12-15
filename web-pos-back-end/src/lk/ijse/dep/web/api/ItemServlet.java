@@ -29,18 +29,22 @@ import java.util.List;
 public class ItemServlet extends HttpServlet {
 
 
-    @Override
+   /* @Override
     protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.addHeader("Access-Control-Allow-Origin", "http://localhost:3000");
         resp.addHeader("Access-Control-Allow-Headers", "Content-Type");
         resp.addHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
     }
-
+*/
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+/*
 
-        /* CORS Policy */
+        */
+/* CORS Policy *//*
+
         resp.addHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+*/
 
         String code = req.getParameter("code");
         BasicDataSource cp = (BasicDataSource) getServletContext().getAttribute("cp");
@@ -80,9 +84,9 @@ public class ItemServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        /* CORS Policy */
+       /* *//* CORS Policy *//*
         resp.addHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-
+*/
         BasicDataSource cp = (BasicDataSource) getServletContext().getAttribute("cp");
         try (Connection connection = cp.getConnection()) {
             Jsonb jsonb = JsonbBuilder.create();
@@ -119,9 +123,9 @@ public class ItemServlet extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        /* CORS Policy */
+      /*  *//* CORS Policy *//*
         resp.addHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-
+*/
         String code = req.getParameter("code");
         if (code == null || !code.matches("P\\d{3}")) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -169,9 +173,9 @@ public class ItemServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        /* CORS Policy */
+       /* *//* CORS Policy *//*
         resp.addHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-
+*/
         String code = req.getParameter("code");
         if (code == null || !code.matches("P\\d{3}")) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
